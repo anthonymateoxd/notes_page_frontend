@@ -1,6 +1,7 @@
 import { createContext, useContext, useEffect, useState } from 'react';
 import {
   addRequestUser,
+  editUserRequest,
   getAllFoldersAndNotesRequest,
   getAllInformationByIdRequest,
   postLogin,
@@ -25,6 +26,7 @@ export const AuthProvider = ({ children }) => {
   const [loading, setLoading] = useState(true);
   const [errors, setErrors] = useState([]);
   const [user, setUser] = useState(null);
+  const [userData, setUserData] = useState('');
 
   const aggUserRequest = async user => {
     try {
@@ -85,7 +87,6 @@ export const AuthProvider = ({ children }) => {
     try {
       const res = await getAllInformationByIdRequest();
       setAllAboutUser(res.data);
-      console.log(res.data);
     } catch (error) {
       if (Array.isArray(error.response.data)) {
         setErrors([error.response.data[0]]);
@@ -139,15 +140,26 @@ export const AuthProvider = ({ children }) => {
     CheckLogin();
   }, []);
 
+  const editUser = async userData => {
+    try {
+      const res = await editUserRequest(userData);
+      setUserData(res.data);
+    } catch (error) {
+      console.error(error);
+    }
+  };
+
   return (
     <AuthContext.Provider
       value={{
         allFoldersAndNotes,
         isAuthenticated,
         allBoutUser,
+        userData,
         loading,
         errors,
         user,
+        editUser,
         loginRequest,
         aggUserRequest,
         getAllFoldersAndNotes,

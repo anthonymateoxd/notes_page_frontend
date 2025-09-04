@@ -1,5 +1,6 @@
 import { useState, useEffect } from 'react';
 import '../../styles/users/EditUserModal.css';
+import { useAuth } from '../../context/AuthProvider';
 
 function EditUserModal({ visible, onClose, user, onSave }) {
   const [formData, setFormData] = useState({
@@ -9,6 +10,8 @@ function EditUserModal({ visible, onClose, user, onSave }) {
   });
   const [loading, setLoading] = useState(false);
   const [isEdited, setIsEdited] = useState(false);
+
+  const { editUser } = useAuth();
 
   // Cargar datos del usuario cuando se abre el modal
   useEffect(() => {
@@ -39,8 +42,8 @@ function EditUserModal({ visible, onClose, user, onSave }) {
 
     try {
       // Simular guardado (aquí conectarías con tu API)
-      console.log('Usuario actualizado:', formData);
-
+      // console.log('Usuario actualizado:', formData);
+      await editUser(formData);
       // Éxito - cerrar modal y recargar datos
       onSave();
       onClose();

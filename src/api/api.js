@@ -4,6 +4,8 @@ export const addRequestUser = user => api.post('/user', user);
 
 export const postLogin = user => api.post('/login', user);
 
+export const editUserRequest = userData => api.post('/updated-user', userData);
+
 export const verifyTokenRequest = () => api.get('/verify');
 
 export const getAllFoldersRequest = () => api.get('/get-folders');
