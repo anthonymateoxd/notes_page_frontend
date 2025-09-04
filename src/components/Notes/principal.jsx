@@ -1,7 +1,7 @@
+import '../../styles/modals/Principal.css';
 import { useState } from 'react';
 import Modal1 from './Modal1';
 import Modal2 from './Modal2';
-import '../../styles/modals/principal.css';
 import { useNavigate } from 'react-router-dom';
 import { useFolder } from '../../context/FolderProvider';
 

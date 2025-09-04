@@ -6,10 +6,11 @@ import ProfilePage from './pages/ProfilePage';
 import RegisterPage from './pages/RegisterPage';
 import ProtectedRoute from './secure/ProtectedRoute';
 import PageNotFound from './pages/PageNotFound';
-import NotesPage from './pages/NotesPage';
+// import NotesPage from './pages/NotesPage';
 import { FolderProvider } from './context/FolderProvider';
 import { NotesProvider } from './context/NotesProvider';
-import Principal from './components/Notes/principal';
+import Principal from './components/Notes/Principal';
+
 function App() {
   return (
     <AuthProvider>
