@@ -5,9 +5,13 @@ import { useNavigate } from 'react-router-dom';
 
 function RegisterPage() {
   const { aggUserRequest, isAuthenticated } = useAuth();
-  const [email, setEmail] = useState('');
-  const [password, setPassword] = useState('');
-  const [confirmPassword, setConfirmPassword] = useState('');
+  const [formData, setFormData] = useState({
+    name: '',
+    email: '',
+    password: '',
+    confirmPassword: '',
+    description: '',
+  });
   const [agreeTerms, setAgreeTerms] = useState(false);
   const [passwordError, setPasswordError] = useState('');
   const [isFormValid, setIsFormValid] = useState(false);
@@ -22,7 +26,11 @@ function RegisterPage() {
 
   useEffect(() => {
     // Validar que las contraseñas coincidan
-    if (password && confirmPassword && password !== confirmPassword) {
+    if (
+      formData.password &&
+      formData.confirmPassword &&
+      formData.password !== formData.confirmPassword
+    ) {
       setPasswordError('Las contraseñas no coinciden');
     } else {
       setPasswordError('');
@@ -30,37 +38,61 @@ function RegisterPage() {
 
     // Validar el formulario completo
     const isValid =
-      email &&
-      password &&
-      confirmPassword &&
-      password === confirmPassword &&
+      formData.name &&
+      formData.email &&
+      formData.password &&
+      formData.confirmPassword &&
+      formData.password === formData.confirmPassword &&
       agreeTerms;
 
     setIsFormValid(!!isValid);
-  }, [email, password, confirmPassword, agreeTerms]);
+  }, [formData, agreeTerms]);
 
-  const handleSubmit = e => {
+  const handleInputChange = e => {
+    const { name, value } = e.target;
+    setFormData(prev => ({
+      ...prev,
+      [name]: value,
+    }));
+  };
+
+  const handleSubmit = async e => {
     e.preventDefault();
 
-    if (password !== confirmPassword) {
+    if (formData.password !== formData.confirmPassword) {
       setPasswordError('Las contraseñas no coinciden');
       return;
     }
 
-    // Aquí iría la lógica de registro
-    aggUserRequest({ email, password });
+    const formData2 = {
+      name: formData.name,
+      email: formData.email,
+      password: formData.password,
+      description: formData.description,
+    };
+    // console.log(formData2);
+
+    await aggUserRequest(formData2);
+
+    // Enviar datos de registro
+    // aggUserRequest({
+    //   name: formData.name,
+    //   email: formData.email,
+    //   password: formData.password,
+    //   description: formData.description,
+    // });
     navigate('/profile');
   };
 
   // Función para calcular la fortaleza de la contraseña
   const calculatePasswordStrength = () => {
-    if (!password) return 0;
+    if (!formData.password) return 0;
 
     let strength = 0;
-    if (password.length >= 8) strength += 30;
-    if (/[A-Z]/.test(password)) strength += 20;
-    if (/[0-9]/.test(password)) strength += 20;
-    if (/[^A-Za-z0-9]/.test(password)) strength += 30;
+    if (formData.password.length >= 8) strength += 30;
+    if (/[A-Z]/.test(formData.password)) strength += 20;
+    if (/[0-9]/.test(formData.password)) strength += 20;
+    if (/[^A-Za-z0-9]/.test(formData.password)) strength += 30;
 
     return Math.min(strength, 100);
   };
@@ -72,7 +104,7 @@ function RegisterPage() {
     } else if (strength < 70) {
       return 'var(--warning)';
     }
-    return 'var(--success)'; // No need for an 'else' here, this will cover strength >= 70
+    return 'var(--success)';
   };
 
   const getPasswordStrengthText = () => {
@@ -84,21 +116,30 @@ function RegisterPage() {
 
   return (
     <div className='register-page'>
+      {/* Elementos flotantes decorativos */}
+      <div className='floating-elements'>
+        <div className='floating-item note-1'>📝</div>
+        <div className='floating-item note-2'>📋</div>
+        <div className='floating-item note-3'>📌</div>
+        <div className='floating-item note-4'>📒</div>
+        <div className='floating-item note-5'>✏️</div>
+        <div className='floating-item note-6'>🔖</div>
+        <div className='floating-item paper-plane'>📨</div>
+        <div className='floating-item highlighter'>🖍️</div>
+      </div>
+
       <div className='register-container'>
         <div className='register-left'>
-          <div className='register-decoration'>
-            <div className='decoration-item notes'></div>
-            <div className='decoration-item pen'></div>
-            <div className='decoration-item highlighters'></div>
-            <div className='decoration-item paper-plane'></div>
+          <div className='floating-icons'>
+            <span className='icon note'>📝</span>
+            <span className='icon clip'>📌</span>
+            <span className='icon folder'>📅</span>
+            <span className='icon book'>📚</span>
+            <span className='icon calendar'>📎</span>
+            <span className='icon lightbulb'>💡</span>
+            <span className='icon star'>⭐</span>
           </div>
-          <div className='register-quote'>
-            <h2>Comienza tu journey organizativa</h2>
-            <p>
-              Únete a miles de usuarios que ya están transformando cómo capturan
-              y organizan su conocimiento
-            </p>
-          </div>
+          <div className='hero-section'></div>
         </div>
 
         <div className='register-right'>
@@ -113,24 +154,56 @@ function RegisterPage() {
               onSubmit={handleSubmit}
             >
               <div className='input-group'>
-                <label htmlFor='email'>Correo electrónico</label>
+                <label htmlFor='name'>Nombre completo *</label>
+                <input
+                  type='text'
+                  id='name'
+                  name='name'
+                  value={formData.name}
+                  onChange={handleInputChange}
+                  placeholder='Tu nombre completo'
+                  required
+                  maxLength={100}
+                />
+              </div>
+
+              <div className='input-group'>
+                <label htmlFor='email'>Correo electrónico *</label>
                 <input
                   type='email'
                   id='email'
-                  value={email}
-                  onChange={e => setEmail(e.target.value)}
+                  name='email'
+                  value={formData.email}
+                  onChange={handleInputChange}
                   placeholder='tu@email.com'
                   required
                 />
               </div>
 
               <div className='input-group'>
-                <label htmlFor='password'>Contraseña</label>
+                <label htmlFor='description'>Breve descripción</label>
+                <textarea
+                  id='description'
+                  name='description'
+                  value={formData.description}
+                  onChange={handleInputChange}
+                  placeholder='Cuéntanos algo sobre ti... (opcional)'
+                  rows='3'
+                  maxLength={255}
+                />
+                <span className='char-count'>
+                  {formData.description.length}/255
+                </span>
+              </div>
+
+              <div className='input-group'>
+                <label htmlFor='password'>Contraseña *</label>
                 <input
                   type='password'
                   id='password'
-                  value={password}
-                  onChange={e => setPassword(e.target.value)}
+                  name='password'
+                  value={formData.password}
+                  onChange={handleInputChange}
                   placeholder='Crea una contraseña segura'
                   required
                   className={passwordError ? 'error' : ''}
@@ -146,7 +219,7 @@ function RegisterPage() {
                     ></div>
                   </div>
                   <span className='strength-text'>
-                    {password
+                    {formData.password
                       ? getPasswordStrengthText()
                       : 'Seguridad de la contraseña'}
                   </span>
@@ -154,12 +227,13 @@ function RegisterPage() {
               </div>
 
               <div className='input-group'>
-                <label htmlFor='confirmPassword'>Confirmar contraseña</label>
+                <label htmlFor='confirmPassword'>Confirmar contraseña *</label>
                 <input
                   type='password'
                   id='confirmPassword'
-                  value={confirmPassword}
-                  onChange={e => setConfirmPassword(e.target.value)}
+                  name='confirmPassword'
+                  value={formData.confirmPassword}
+                  onChange={handleInputChange}
                   placeholder='Repite tu contraseña'
                   required
                   className={passwordError ? 'error' : ''}
@@ -193,7 +267,17 @@ function RegisterPage() {
                 className='register-button'
                 disabled={!isFormValid}
               >
-                Crear cuenta
+                <span>Crear cuenta</span>
+                <svg
+                  width='20'
+                  height='20'
+                  viewBox='0 0 24 24'
+                  fill='none'
+                  stroke='currentColor'
+                  strokeWidth='2'
+                >
+                  <path d='M5 12h14M12 5l7 7-7 7' />
+                </svg>
               </button>
             </form>
 
@@ -255,7 +339,7 @@ function RegisterPage() {
                   onClick={() => navigate('/login-page')}
                   style={{ cursor: 'pointer' }}
                 >
-                  Iniciar Session
+                  Iniciar Sesión
                 </a>
               </p>
             </div>
