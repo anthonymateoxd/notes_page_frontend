@@ -10,6 +10,7 @@ import PageNotFound from './pages/PageNotFound';
 import { FolderProvider } from './context/FolderProvider';
 import { NotesProvider } from './context/NotesProvider';
 import Principal from './components/Notes/Principal';
+import Header from 'remote/Header';
 
 function App() {
   return (
@@ -17,6 +18,7 @@ function App() {
       <FolderProvider>
         <NotesProvider>
           <BrowserRouter>
+            <Header />
             <Routes>
               <Route
                 path='/'
